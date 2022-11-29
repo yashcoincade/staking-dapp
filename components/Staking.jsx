@@ -14,6 +14,7 @@ const Staking = () => {
     const { data: earned, isLoading: earnedLoading } = useContractRead(contract, "earned", address)
     const { data: getStaked, isLoading: getStakedLoading } = useContractRead(contract, "getStaked", address)
     const { data: balanceOf, isLoading: balanceOfLoading } = useContractRead(tokenContract, "balanceOf", address)
+    const { data:rewardsPerToken, isLoading:rewardsPerTokenLoading } = useContractRead(contract, "s_rewardPerTokenStored")
 
     const { mutateAsync: stake } = useContractWrite(contract, "stake")
     const { mutateAsync: withdraw } = useContractWrite(contract, "withdraw")
@@ -77,6 +78,7 @@ const Staking = () => {
             <div className="bg-gradient-to-r from-emerald-900 to-green-900 w-[1000px] rounded-xl p-5 ">
                 <div className="flex p-2 justify-between">
                     <img src="https://imgur.com/viVcTZ5.png" alt="coinlogo" className="w-[50px] h-[50px] object-contain pl-2" />
+                    <p className="text-4xl font-bold ml-20 text-emerald-300 animate-pulse">{rewardsPerTokenLoading ? <BeatLoader color="white" /> : (rewardsPerToken * 100).toString()}% APR</p>
                     <button className="text-xl font-bold flex items-center p-1 bg-emerald-500 rounded-md text-black hover:bg-[#32706F]"
                     onClick={claimEarnedTokens} >Claim Rewards</button>
                 </div>
