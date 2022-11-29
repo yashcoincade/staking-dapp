@@ -6,6 +6,7 @@ import {ethers,BigNumber} from "ethers";
 
 const Staking = () => {
     const [stakeAmount, setStakeAmount] = useState(0);
+    const [withdrawAmount, setWithdrawAmount] = useState(0);
 
     const address = useAddress();
     const { contract } = useContract("0xAD53b44FC9bEf5507F6Ba2ac5010cB63B624B306");
@@ -15,14 +16,13 @@ const Staking = () => {
     const { data: balanceOf, isLoading: balanceOfLoading } = useContractRead(tokenContract, "balanceOf", address)
 
     const { mutateAsync: stake } = useContractWrite(contract, "stake")
-    // const { mutateAsync: approve } = useContractWrite(tokenContract, "approve")
+    const { mutateAsync: withdraw } = useContractWrite(contract, "withdraw")
+    const { mutateAsync: claimReward } = useContractWrite(contract, "claimReward")
     const { mutateAsync: increaseAllowance } = useContractWrite(tokenContract, "increaseAllowance")
 
     const stakeTokens = async () => {
         const notification = toast.loading("Staking Cade...");
         try {
-            // const approveData = await approve([ address, ethers.utils.parseEther(stakeAmount) ]);
-            // console.info("contract call successs", approveData);
             const allowancedata = await increaseAllowance([ "0xAD53b44FC9bEf5507F6Ba2ac5010cB63B624B306", ethers.utils.parseEther(stakeAmount) ]);
             console.info("contract call successs", allowancedata);
             const data = await stake([ ethers.utils.parseEther(stakeAmount)]);
@@ -37,13 +37,48 @@ const Staking = () => {
             console.error("contract call failure", err);
           }
     }
+
+    const withdrawTokens = async () => {
+        const notification = toast.loading("Withdrawing Cade...");
+        try {
+            const data = await withdraw([ (ethers.utils.parseEther(withdrawAmount)).toString()]);
+            console.info("contract call successs", data);
+            toast.success("Cade Withdrawn successfully!", {
+                id: notification,
+              });
+          } catch (err) {
+            toast.error(err.reason, {
+                id: notification,
+              });
+            console.error("contract call failure", err);
+          }
+    }
+
+    const claimEarnedTokens = async () => {
+        const notification = toast.loading("Claiming Cade Rewards...");
+        try {
+            const data = await claimReward([]);
+            console.info("contract call successs", data);
+            toast.success("Rewards Claimed successfully!", {
+                id: notification,
+              });
+          } catch (err) {
+            toast.error(err.reason, {
+                id: notification,
+              });
+            console.error("contract call failure", err);
+          }
+    }
+
+
     return (
         <div className="flex flex-col justify-center items-center mt-5">
             <h1 className="text-3xl font-bold underline mb-5">Staking Platform</h1>
             <div className="bg-gradient-to-r from-emerald-900 to-green-900 w-[1000px] rounded-xl p-5 ">
                 <div className="flex p-2 justify-between">
                     <img src="https://imgur.com/viVcTZ5.png" alt="coinlogo" className="w-[50px] h-[50px] object-contain pl-2" />
-                    <button className="text-xl font-bold flex items-center p-1 bg-emerald-500 rounded-md text-black hover:bg-[#32706F]">Claim Rewards</button>
+                    <button className="text-xl font-bold flex items-center p-1 bg-emerald-500 rounded-md text-black hover:bg-[#32706F]"
+                    onClick={claimEarnedTokens} >Claim Rewards</button>
                 </div>
 
                 <div className="flex justify-between mt-10">
@@ -65,8 +100,10 @@ const Staking = () => {
 
                 <div className="flex justify-between mt-10">
                     <div className="flex mt-3">
-                        <input type="number" className="bg-[#32706F] ml-1 rounded-md text-bold" />
-                        <button className="text-2xl font-semibold ml-2 bg-[#32706F] p-1 rounded-md hover:bg-emerald-500">Withdraw</button>
+                        <input type="number" className="bg-[#32706F] ml-1 rounded-md text-bold"  onChange={(e)=>{setWithdrawAmount(e.target.value)}}/>
+                        <button className="text-2xl font-semibold ml-2 bg-[#32706F] p-1 rounded-md hover:bg-emerald-500"
+                        onClick={withdrawTokens}
+                        >Withdraw</button>
                     </div>
                     <div className="flex mt-3">
                         <input type="number" className="bg-[#32706F] mr-2 rounded-md text-bold" onChange={(e)=>{setStakeAmount(e.target.value)}}/>
