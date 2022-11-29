@@ -59,7 +59,7 @@ const Staking = () => {
                         {balanceOfLoading ? <BeatLoader color="white" /> : (balanceOf/(1*10**18)).toString()} Cade
                     </p>
                     <p className="text-2xl font-bold mr-3">
-                        {earnedLoading ? <BeatLoader color="white" /> : (earned/(1*10**18)).toString()} Cade
+                        {earnedLoading ? <BeatLoader color="white" /> : (ethers.utils.formatEther(earned)).toString()} Cade
                     </p>
                 </div>
 
