@@ -85,19 +85,19 @@ const Staking = () => {
                 </div>
 
                 <div className="flex justify-between mt-10">
-                    <p className="font-extralight ml-3 text-emerald-200">Your Deposit</p>
+                    <p className="font-extralight ml-5 text-emerald-200">Your Deposit</p>
                     <p className="font-extralight text-emerald-200">Cade in Your Wallet</p>
-                    <p className="font-extralight mr-3 text-emerald-200">Your Earnings</p>
+                    <p className="font-extralight mr-5 text-emerald-200">Your Earnings</p>
                 </div>
                 <div className="flex justify-between">
                     <p className="text-2xl font-bold ml-3">
-                        {getStakedLoading ? <BeatLoader color="white" /> : (getStaked/(1*10**18)).toString()} Cade
+                        {getStakedLoading ? <BeatLoader color="white" /> : (getStaked/(1*10**18)).toFixed(2).toString()} Cade
                         </p>
                     <p className="text-2xl font-bold">
-                        {balanceOfLoading ? <BeatLoader color="white" /> : (balanceOf/(1*10**18)).toString()} Cade
+                        {balanceOfLoading ? <BeatLoader color="white" /> : (balanceOf/(1*10**18)).toFixed(2).toString()} Cade
                     </p>
                     <p className="text-2xl font-bold mr-3">
-                        {earnedLoading ? <BeatLoader color="white" /> : (ethers.utils.formatEther(earned)).toString()} Cade
+                        {earnedLoading ? <BeatLoader color="white" /> : Number(ethers.utils.formatEther(earned)).toFixed(2).toString()} Cade
                     </p>
                 </div>
 
