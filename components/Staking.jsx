@@ -9,10 +9,11 @@ const Staking = () => {
     const [withdrawAmount, setWithdrawAmount] = useState(0);
 
     const address = useAddress();
-    const { contract } = useContract("0xAD53b44FC9bEf5507F6Ba2ac5010cB63B624B306");
+    const { contract } = useContract("0x2FE35D786a15b2E3608c39EF86F4b4367cA40586");
     const { contract: tokenContract } = useContract("0xa51001ef0dC900D39425Fa15B126Da10E5926886");
     const { data: earned, isLoading: earnedLoading } = useContractRead(contract, "earned", address)
     const { data: getStaked, isLoading: getStakedLoading } = useContractRead(contract, "getStaked", address)
+    const { data:totalSupply, isLoading:totalSupplyLoading } = useContractRead(contract, "s_totalSupply")
     const { data: balanceOf, isLoading: balanceOfLoading } = useContractRead(tokenContract, "balanceOf", address)
     const { data:rewardsPerToken, isLoading:rewardsPerTokenLoading } = useContractRead(contract, "s_rewardPerTokenStored")
 
@@ -24,7 +25,7 @@ const Staking = () => {
     const stakeTokens = async () => {
         const notification = toast.loading("Staking Cade...");
         try {
-            const allowancedata = await increaseAllowance([ "0xAD53b44FC9bEf5507F6Ba2ac5010cB63B624B306", ethers.utils.parseEther(stakeAmount) ]);
+            const allowancedata = await increaseAllowance([ "0x2FE35D786a15b2E3608c39EF86F4b4367cA40586", ethers.utils.parseEther(stakeAmount) ]);
             console.info("contract call successs", allowancedata);
             const data = await stake([ ethers.utils.parseEther(stakeAmount)]);
             console.info("contract call successs", data);
@@ -78,7 +79,7 @@ const Staking = () => {
             <div className="bg-gradient-to-r from-emerald-900 to-green-900 w-[1000px] rounded-xl p-5 ">
                 <div className="flex p-2 justify-between">
                     <img src="https://imgur.com/viVcTZ5.png" alt="coinlogo" className="w-[50px] h-[50px] object-contain pl-2" />
-                    <p className="text-4xl font-bold ml-20 text-emerald-300 animate-pulse">{rewardsPerTokenLoading ? <BeatLoader color="white" /> : (rewardsPerToken * 100).toString()}% APR</p>
+                    <p className="text-4xl font-bold ml-20 text-emerald-300 bg-black p-1 rounded-md shadow-lg">{totalSupplyLoading ? <BeatLoader color="white" /> : (ethers.utils.formatEther(totalSupply)).toString()} TVL</p>
                     <button className="text-xl font-bold flex items-center p-1 bg-emerald-500 rounded-md text-black hover:bg-[#32706F]"
                     onClick={claimEarnedTokens} >Claim Rewards</button>
                 </div>
@@ -105,7 +106,7 @@ const Staking = () => {
                         <input type="number" className="bg-[#32706F] ml-1 rounded-md text-bold"  onChange={(e)=>{setWithdrawAmount(e.target.value)}}/>
                         <button className="text-2xl font-semibold ml-2 bg-[#32706F] p-1 rounded-md hover:bg-emerald-500"
                         onClick={withdrawTokens}
-                        >Withdraw</button>
+                        >UnStake</button>
                     </div>
                     <div className="flex mt-3">
                         <input type="number" className="bg-[#32706F] mr-2 rounded-md text-bold" onChange={(e)=>{setStakeAmount(e.target.value)}}/>
